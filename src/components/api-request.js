@@ -282,7 +282,7 @@ export default class ApiRequest extends LitElement {
                     data-param-serialize-explode = "${paramExplode}"
                     data-array = "true"
                     placeholder = "add-multiple &#x21a9;"
-                    .value = "${Array.isArray(exampleVal) ? exampleVal : exampleVal.split(',')}"
+                    value = "${Array.isArray(exampleVal) ? exampleVal.join(',') : exampleVal}"
                   >
                   </tag-input>`
                 : paramSchema.type === 'object'
@@ -353,7 +353,7 @@ export default class ApiRequest extends LitElement {
                 ${paramSchema.type === 'array' ? '[' : ''}
                 <a class = "${this.allowTry === 'true' ? '' : 'inactive-link'}"
                   data-example-type="${paramSchema.type === 'array' ? paramSchema.type : 'string'}"
-                  data-example = "${v.value && Array.isArray(v.value) ? (v.value?.join('~|~') || '') : (v.value || '')}"
+                  data-example = "${paramSchema.type === 'array' ? (v.value?.join('~|~') || '') : (v.value || '')}"
                   @click="${(e) => {
                     const inputEl = e.target.closest('table').querySelector(`[data-pname="${param.name}"]`);
                     if (inputEl) {
@@ -659,7 +659,7 @@ export default class ApiRequest extends LitElement {
                     data-example = "${Array.isArray(fieldSchema.example) ? fieldSchema.example.join('~|~') : fieldSchema.example || ''}"
                     data-array = "true"
                     placeholder = "add-multiple &#x21a9;"
-                    .value = "${Array.isArray(fieldSchema.example) ? fieldSchema.example : fieldSchema.example.split(',')}"
+                    value = "${Array.isArray(fieldSchema.example) ? fieldSchema.example.join(',') : fieldSchema.example}"
                   >
                   </tag-input>
                 `
@@ -995,14 +995,14 @@ export default class ApiRequest extends LitElement {
           const paramSerializeExplode = el.dataset.paramSerializeExplode;
           const vals = (el.value && Array.isArray(el.value)) ? el.value : [];
           if (paramSerializeStyle === 'spaceDelimited') {
-            urlQueryParam.append(el.dataset.pname, vals.join(' ').replace(/^\s|\s$/g, ''));
+            urlQueryParam.append(el.dataset.pname, vals.join(' '));
           } else if (paramSerializeStyle === 'pipeDelimited') {
-            urlQueryParam.append(el.dataset.pname, vals.join('|').replace(/^\||\|$/g, ''));
+            urlQueryParam.append(el.dataset.pname, vals.join('|'));
           } else {
             if (paramSerializeExplode === 'true') { // eslint-disable-line no-lonely-if
               vals.forEach((v) => { urlQueryParam.append(el.dataset.pname, v); });
             } else {
-              urlQueryParam.append(el.dataset.pname, vals.join(',').replace(/^,|,$/g, ''));
+              urlQueryParam.append(el.dataset.pname, vals.join(','));
             }
           }
         }
